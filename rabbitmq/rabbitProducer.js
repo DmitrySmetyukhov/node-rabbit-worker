@@ -30,7 +30,7 @@ class Producer {
             Buffer.from(JSON.stringify(logDetails))
         )
 
-        console.log(`The new ${routingKey} log is sent to exchange ${exchangeName}`)
+        console.log(`The new ${routingKey} is sent to exchange ${exchangeName}`)
     }
 }
 
