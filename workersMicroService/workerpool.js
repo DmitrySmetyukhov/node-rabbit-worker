@@ -34,7 +34,9 @@ async function consumeMessages() {
 
     channel.consume(q.queue, message => {
         const data = JSON.parse(message.content);
-        console.log(data, 'data**')
+        console.log(data, ' *data* ')
+        const coeffitient = data.message;
+        runTask(coeffitient);
         channel.ack(message)
     })
 }
