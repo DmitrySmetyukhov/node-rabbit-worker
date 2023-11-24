@@ -1,4 +1,6 @@
 const workerpool = require('workerpool');
+const amqp = require('amqplib');
+const {url, exchangeName} = require('../rabbitmq/rabbitConfig').rabbitMQ;
 
 const MAX_ACTIVE_WORKERS_COUNT_ALLOWED = 2;
 
@@ -19,4 +21,24 @@ function runTask(coeficient = 1) {
         });
 }
 
-runTask()
+
+async function consumeMessages() {
+    const connection = await amqp.connect(url);
+    const channel = await connection.createChannel();
+
+    await channel.assertExchange(exchangeName, "direct");
+
+    const q = await channel.assertQueue("InfoQueue");
+
+    await channel.bindQueue(q.queue, exchangeName, "CalculationTask");
+
+    channel.consume(q.queue, message => {
+        const data = JSON.parse(message.content);
+        console.log(data, 'data**')
+        channel.ack(message)
+    })
+}
+
+consumeMessages();
+
+// runTask()
